@@ -5,10 +5,9 @@ import { PiPhoneLight } from "react-icons/pi";
 import { BsArrowRight } from 'react-icons/bs';
 import { FaMeta } from "react-icons/fa6";
 import { FaGoogle } from "react-icons/fa";
-import axios from 'axios';
 import { useState } from 'react';
 import { ImSpinner2 } from "react-icons/im";
-
+import axiosinstance from "../../axiosinstance";
 const AccountRegisterPage = () =>
 {
   const [ firstName, setFirstName ] = useState( '' );
@@ -29,7 +28,7 @@ const AccountRegisterPage = () =>
     firstName, lastName, email, password
   };
   try {
-    const response = await axios.post( 'http://localhost:8000/api/v1/register/', {
+    const response = await axiosinstance.post( '/register/', {
       email: customerData.email,
       first_name: customerData.firstName,
       last_name: customerData.lastName,

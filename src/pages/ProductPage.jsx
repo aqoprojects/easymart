@@ -8,10 +8,9 @@ import { GiRoundStar } from "react-icons/gi";
 import { SlArrowUp } from "react-icons/sl";
 import { SlArrowDown } from "react-icons/sl";
 import ProductDetail from "../components/ProductComponents/ProductDetail";
-import { NavLink } from "react-router-dom";
-import { useState } from "react";
-
-
+import { NavLink, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axiosinstance from "../axiosinstance";
 
 
 const ProductPage = () =>
@@ -19,6 +18,9 @@ const ProductPage = () =>
   const [openDropDown, setOpenDropDown] = useState(null);
   const [reviewFilter, setReviewFilter] = useState("recent")
   const [showreviewFilter, setShowReviewFilter] = useState(false)
+  const {productId} = useParams()
+  const [product,setProduct] = useState({})
+  
   const showProductDetailInfo = (e)=>{
     setOpenDropDown( (prev) => prev === e.target.dataset.dropdownId ? null : e.target.dataset.dropdownId);
   }
@@ -27,6 +29,13 @@ const ProductPage = () =>
     setShowReviewFilter(false)
   }
 
+  const getProduct = async ()=> {
+    const response = await axiosinstance.get(`/product/${productId}/`)
+    setProduct(response.data)
+  }
+  useEffect(()=>{
+    getProduct()
+  }, [])
   return (
     <article className='min-h-100 px-2 md:px-15 pt-8'>
       <section className='w-full'>
@@ -35,7 +44,7 @@ const ProductPage = () =>
           <MdOutlineKeyboardArrowRight className="text-gray-300" />
           <NavLink to={"/category/bread"}>Product Category</NavLink>
           <MdOutlineKeyboardArrowRight className="text-gray-300" />
-          <p className="text-[#A02B84]">Orange</p>
+          <p className="text-[#A02B84]">{product.name}</p>
         </div>
       </section>
 
@@ -53,12 +62,12 @@ const ProductPage = () =>
 
         <div className="w-120">
           <div className="text-4xl font-semibold mb-4">
-            <h1>Chosen Food 100% Pure Avocade Oil Spray 4.7 oz</h1>
+            <h1>{product.name}</h1>
           </div>
 
           <div className="mb-8">
-            <p className="text-md font-norma text-gray-700l">$2.71/lb</p>
-            <p className="font-semibold text-3xl">$99.99 <span className="line-through font-normal text-lg text-gray-700">$99.99</span> </p>
+            {/* <p className="text-md font-norma text-gray-700l">$2.71/lb</p> */}
+            <p className="font-semibold text-3xl">${product.price} <span className="line-through font-normal text-lg text-gray-700">${product.discount_price}</span> </p>
             <p className="text-[#A02B84] text-lg font-medium mb-4">12 Left</p>
             <button className="w-full bg-[#A02B84] flex justify-center-safe items-center-safe gap-4 text-white py-4  rounded-4xl text-xl font-medium">
               <IoCartOutline className="size-7" />
@@ -194,7 +203,7 @@ const ProductPage = () =>
             <SlArrowDown className={`size-4 cursor-pointer ${ openDropDown == 1 && 'transform rotate-180'} transition-all duration-300`} data-dropdown-id="1" onClick={showProductDetailInfo} />
           </div>
           <div className={`${openDropDown !== "1" && 'hidden'}`} >
-            <p className="md:w-[70%]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla nostrum cumque modi nisi cupiditate soluta voluptatem, quas perspiciatis accusantium ipsam exercitationem expedita quidem ut veniam eius optio, tenetur nihil pariatur!</p>
+            <p className="md:w-[70%]">{product.description}</p>
           </div>
         </div>
         <div className="border-b-1 border-gray-300 py-4">
