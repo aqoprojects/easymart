@@ -10,53 +10,81 @@ import { SlArrowDown } from "react-icons/sl";
 import ProductDetail from "../components/ProductComponents/ProductDetail";
 import { NavLink, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useCart } from "../contexts/CartContext";
 import axiosinstance from "../axiosinstance";
-
 
 const ProductPage = () =>
 {
-  const [openDropDown, setOpenDropDown] = useState(null);
-  const [reviewFilter, setReviewFilter] = useState("recent")
-  const [showreviewFilter, setShowReviewFilter] = useState(false)
-  const {productId} = useParams()
-  const [product,setProduct] = useState({})
+  const [ openDropDown, setOpenDropDown ] = useState( null );
+  const [ reviewFilter, setReviewFilter ] = useState( "recent" );
+  const [ showreviewFilter, setShowReviewFilter ] = useState( false );
+  const { productId } = useParams();
+  const [ product, setProduct ] = useState( {} );
+  const [ selectedImage, setSelectedImage ] = useState();
+  const { addToCart } = useCart();
   
-  const showProductDetailInfo = (e)=>{
-    setOpenDropDown( (prev) => prev === e.target.dataset.dropdownId ? null : e.target.dataset.dropdownId);
-  }
-  const handleReviewFilterDisplay = (e)=>{
-    setReviewFilter(e.target.innerText) 
-    setShowReviewFilter(false)
+  const showProductDetailInfo = ( e ) =>
+  {
+    setOpenDropDown( ( prev ) => prev === e.target.dataset.dropdownId ? null : e.target.dataset.dropdownId );
+  };
+
+  const handleReviewFilterDisplay = ( e ) =>
+  {
+    setReviewFilter( e.target.innerText );
+    setShowReviewFilter( false );
+  };
+
+
+  const getProduct = async () =>
+  {
+    const response = await axiosinstance.get( `/product/${productId}/` );
+    setProduct( response.data );
+    setSelectedImage(`http://localhost:8000${response.data.productImage.find( image => image.is_primary === true).image_url}`)
+    // console.log( response.data.productImage );
+  };
+
+  const handleAddToCart = async ()=> {
+    try{
+      await addToCart(product.product_id, 1)
+      console.log("Added");
+    } catch (error){
+      console.log(error);
+    }
   }
 
-  const getProduct = async ()=> {
-    const response = await axiosinstance.get(`/product/${productId}/`)
-    setProduct(response.data)
-  }
+  useEffect( () =>
+  {
+    getProduct();
+  }, [] );
+
   useEffect(()=>{
-    getProduct()
+     window.scrollTo(0, 0);
   }, [])
+
   return (
     <article className='min-h-100 px-2 md:px-15 pt-8'>
       <section className='w-full'>
         <div className='text-gray-600 font-medium text-lg flex gap-1 items-center-safe'>
           <NavLink to={"/"}>Home</NavLink>
           <MdOutlineKeyboardArrowRight className="text-gray-300" />
-          <NavLink to={"/category/bread"}>Product Category</NavLink>
+          <NavLink to={"/category/bread"} className="text-nowrap">Product Category</NavLink>
           <MdOutlineKeyboardArrowRight className="text-gray-300" />
-          <p className="text-[#A02B84]">{product.name}</p>
+          <p className="text-[#A02B84] truncate">{product.name}</p>
         </div>
       </section>
 
       <section className="flex gap-25 mt-5 lg:flex-nowrap flex-wrap">
         <div className="border-1 border-gray-300 rounded-3xl flex-1 w-full py-5 bg-black/2">
-          <div className="w-full md:w-150 mx-auto ">
-            <img src="../../src/assets/images/products/orange.png" className="w-full" alt="" />
+          <div className="w-full md:w-150 mx-auto mb-3 ">
+            <img src={selectedImage} className="w-full h-100 object-contain" alt="" />
           </div>
-          <div className="flex gap-3 justify-center">
-            <div className="w-20 py-2 rounded-lg bg-[#F2FFF6] ring-1 ring-[#B6349A] "><img src="../../src/assets/images/products/orange.png" className="w-full object-cover object-center" alt="" /></div>
-            <div className="w-20 py-2 rounded-lg bg-[#F2FFF6] opacity-65  ring-1 ring-[#EFEEEE]"><img src="../../src/assets/images/products/orange.png" className="w-full object-cover object-center" alt="" /></div>
-            <div className="w-20 py-2 rounded-lg bg-[#F2FFF6] opacity-65 ring-1 ring-[#EFEEEE]"><img src="../../src/assets/images/products/orange.png" className="w-full object-cover object-center" alt="" /></div>
+          <div className="flex gap-3  justify-center-safe overflow-x-auto no-scrollbar px-5">
+            {/* {product?.productImage?.map(p => console.log(p))} */}
+
+            {product?.productImage?.map( images => <div key={images.image_id} className={`min-w-20 p-2 rounded-lg bg-[#F2FFF6] border-1 ${selectedImage === 'http://localhost:8000'+images.image_url ? 'border-[#B6349A]':'opacity-65 border-[#EFEEEE]'} `}>
+              <img src={`http://localhost:8000${images.image_url}`} className=" object-cover h-15 w-20 object-center" alt="" onClick={()=> setSelectedImage(`http://localhost:8000${images.image_url}`)} />
+            </div> )}
+
           </div>
         </div>
 
@@ -69,7 +97,7 @@ const ProductPage = () =>
             {/* <p className="text-md font-norma text-gray-700l">$2.71/lb</p> */}
             <p className="font-semibold text-3xl">${product.price} <span className="line-through font-normal text-lg text-gray-700">${product.discount_price}</span> </p>
             <p className="text-[#A02B84] text-lg font-medium mb-4">12 Left</p>
-            <button className="w-full bg-[#A02B84] flex justify-center-safe items-center-safe gap-4 text-white py-4  rounded-4xl text-xl font-medium">
+            <button className="w-full bg-[#A02B84] flex justify-center-safe items-center-safe gap-4 text-white py-4  rounded-4xl text-xl font-medium" onClick={handleAddToCart}>
               <IoCartOutline className="size-7" />
               Add To Cart
             </button>
@@ -135,16 +163,16 @@ const ProductPage = () =>
           <div className="flex  justify-between items-center-safe">
             <h2 className="text-2xl font-semibold">Reviews</h2>
             <div>
-              <p className="text-[#A02B84] flex items-center-safe capitalize cursor-pointer" onClick={()=> setShowReviewFilter((prev)=> prev === true ? false : true)} >{reviewFilter} <MdOutlineKeyboardArrowDown className="size-5" /> </p>
+              <p className="text-[#A02B84] flex items-center-safe capitalize cursor-pointer" onClick={() => setShowReviewFilter( ( prev ) => prev === true ? false : true )} >{reviewFilter} <MdOutlineKeyboardArrowDown className="size-5" /> </p>
 
               <div className={` ${!showreviewFilter && 'hidden'} absolute w-fit bg-white ring-1 ring-black/20`} onClick={handleReviewFilterDisplay}>
-              <p className="text-[#A02B84] flex items-center-safe hover:bg-black/20 pl-1 pr-2 cursor-pointer font-medium">Most liked </p>
-              <p className="text-[#A02B84] flex items-center-safe hover:bg-black/20 pl-1 pr-2 cursor-pointer font-medium">Oldest</p>
-              <p className="text-[#A02B84] flex items-center-safe hover:bg-black/20 pl-1 pr-2 cursor-pointer font-medium">Recent</p>
-            </div>
+                <p className="text-[#A02B84] flex items-center-safe hover:bg-black/20 pl-1 pr-2 cursor-pointer font-medium">Most liked </p>
+                <p className="text-[#A02B84] flex items-center-safe hover:bg-black/20 pl-1 pr-2 cursor-pointer font-medium">Oldest</p>
+                <p className="text-[#A02B84] flex items-center-safe hover:bg-black/20 pl-1 pr-2 cursor-pointer font-medium">Recent</p>
+              </div>
             </div>
 
-            
+
           </div>
 
           <div className="flex flex-col gap-4 mt-5 h-100 overflow-y-auto no-scrollbar">
@@ -200,7 +228,7 @@ const ProductPage = () =>
         <div className="border-b-1 border-gray-300 py-4">
           <div className="flex justify-between items-center-safe mb-3" >
             <h3 className="text-xl font-semibold">Details</h3>
-            <SlArrowDown className={`size-4 cursor-pointer ${ openDropDown == 1 && 'transform rotate-180'} transition-all duration-300`} data-dropdown-id="1" onClick={showProductDetailInfo} />
+            <SlArrowDown className={`size-4 cursor-pointer ${openDropDown == 1 && 'transform rotate-180'} transition-all duration-300`} data-dropdown-id="1" onClick={showProductDetailInfo} />
           </div>
           <div className={`${openDropDown !== "1" && 'hidden'}`} >
             <p className="md:w-[70%]">{product.description}</p>
@@ -209,7 +237,7 @@ const ProductPage = () =>
         <div className="border-b-1 border-gray-300 py-4">
           <div className="flex justify-between items-center-safe mb-3" >
             <h3 className="text-xl font-semibold">Conservation and storage</h3>
-            <SlArrowDown className={`size-4 cursor-pointer ${ openDropDown == 2 && 'transform rotate-180'} transition-all duration-300`}  data-dropdown-id="2"  onClick={showProductDetailInfo} />
+            <SlArrowDown className={`size-4 cursor-pointer ${openDropDown == 2 && 'transform rotate-180'} transition-all duration-300`} data-dropdown-id="2" onClick={showProductDetailInfo} />
           </div>
           <div className={`${openDropDown !== "2" && 'hidden'}`}>
             <p className="md:w-[70%]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla nostrum cumque modi nisi cupiditate soluta voluptatem, quas perspiciatis accusantium ipsam exercitationem expedita quidem ut veniam eius optio, tenetur nihil pariatur!</p>
@@ -218,7 +246,7 @@ const ProductPage = () =>
         <div className=" py-4">
           <div className="flex justify-between items-center-safe mb-3" >
             <h3 className="text-xl font-semibold">Ingredients</h3>
-            <SlArrowDown className={`size-4 cursor-pointer ${ openDropDown == 3 && 'transform rotate-180'} transition-all duration-300`} data-dropdown-id="3" onClick={showProductDetailInfo} />
+            <SlArrowDown className={`size-4 cursor-pointer ${openDropDown == 3 && 'transform rotate-180'} transition-all duration-300`} data-dropdown-id="3" onClick={showProductDetailInfo} />
           </div>
           <div className={`${openDropDown !== "3" && 'hidden'}`} >
             <p className="md:w-[70%]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla nostrum cumque modi nisi cupiditate soluta voluptatem, quas perspiciatis accusantium ipsam exercitationem expedita quidem ut veniam eius optio, tenetur nihil pariatur!</p>

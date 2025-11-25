@@ -2,31 +2,26 @@ import { IoCartOutline } from "react-icons/io5";
 import { MdLocationPin } from "react-icons/md";
 import { LuCalendarDays } from "react-icons/lu";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
-import { HiOutlineTrash } from "react-icons/hi2";
-import { GoPlus } from "react-icons/go";
 import { BsCreditCard2Front } from "react-icons/bs";
-import { HiMinus } from "react-icons/hi2";
+// import { HiMinus } from "react-icons/hi2";
 import ProductDetail from "../components/ProductComponents/ProductDetail";
 import { useNavigate } from "react-router-dom";
-import { useReducer } from "react";
+// import { useReducer } from "react";
+import { useCart } from "../contexts/CartContext";
+import AddDeleteAction from "../components/ControlComponents/AddDeleteAction";
 
 const ProductCartPage = () =>
 {
-  const navigate = useNavigate()
-  const handleCheckout = ()=>{
-    navigate("/order/2345")
-  }
+  const { cartItems, orderItems, cartTotal } = useCart();
+  const navigate = useNavigate();
+  const handleCheckout = () =>
+  {
+    navigate( "/order/2345" );
+  };
 
-  const reducer = (state, action)=> {
-    switch(action.type){
-      case "increment":
-        return {count: state.count + 1}
-      case "decrement":
-        return {count: state.count > 0 && state.count - 1}
-    }
-  }
+  // console.log(orderItems);
 
-  const [state, dispatch] = useReducer(reducer, {count: 0})
+
   return (
     <>
       <article className='min-h-100 flex gap-3 pt-15 lg:px-15 md:flex-nowrap flex-wrap'>
@@ -61,106 +56,33 @@ const ProductCartPage = () =>
           <div className="ring-1 ring-gray-200/50 p-6 rounded-2xl md:min-w-100 lg:min-w-120">
             <div className="text-gray-600 font-medium"><p>Items Name</p></div>
             <div className="p-3 flex flex-col gap-8">
-              <div className="flex items-center-safe gap-3 lg:flex-nowrap flex-wrap justify-between">
-                <div className="flex items-center-safe">
-                  <div className="bg-gray-100/50 w-20 rounded-2xl">
-                    <img src="../../src/assets/images/products/orange.png" className="w-full object-contain object-center" alt="product" />
+
+              {cartItems.map( ( item ) =>
+              {
+                return (<div key={item.cart_item_id} className="flex items-center-safe gap-3 lg:flex-nowrap flex-wrap justify-between">
+                  <div className="flex items-center-safe gap-2">
+                    <div className="bg-gray-100/50 w-20 rounded-2xl">
+                      <img src={item.product.productImage} className="w-full object-contain object-center" alt="product" />
+                    </div>
+
+                    <div className="font-medium flex-1 md:min-w-30">
+                      <p className=" ">{item.product.name}</p>
+                      <p className="text-[#A02B84] font-semibold">${item.product.price}  <span className="text-gray-400 font-light ml-2">$99.99</span></p>
+                    </div>
                   </div>
 
-                  <div className="font-medium flex-1">
-                    <p className=" ">Sweet Green Seedless Grapes 1.5-2 lb</p>
-                    <p className="text-[#A02B84] font-semibold">$99.99  <span className="text-gray-400 font-light ml-2">$99.99</span></p>
-                  </div>
-                </div>
+                  <div className="flex lg:flex-col w-full lg:w-70 justify-between items-center-safe gap-1 ">
+                     <p className="font-medium text-xl text-nowrap">$ {
+                      orderItems.find(order => order.product_id === item.product.product_id)?.subtotal 
+                    }</p>
+                    <AddDeleteAction quantity={item.quantity} cartItemId={item.cart_item_id} productId={item.product_id} />
 
-                <div className="flex w-full lg:w-70 justify-between items-center-safe gap-1 ">
-                  <div className="bg-gray-100/50 flex items-center-safe p-1 gap-1 rounded-3xl">
-                    <button className="p-2 bg-white rounded-full" onClick={()=> dispatch({type: "decrement"})}>
-                      <HiOutlineTrash className="size-5" />
-                    </button>
-                    <p className="px-2 font-semibold">{state.count || 0}</p>
-                    <button className="p-2 bg-[#A02B84] text-white rounded-full" onClick={()=> dispatch({type: "increment"})}><GoPlus className="size-5" /></button>
-                    <button className="text-[#A02B84] text-sm font-medium lg:order-last order-first">Remove</button>
+      
+                    
                   </div>
+                </div>)
 
-                  <p className="font-medium text-xl order-first lg:order-last">$25.98</p>
-                </div>
-              </div>
-              <div className="flex items-center-safe gap-3 lg:flex-nowrap flex-wrap justify-between">
-                <div className="flex items-center-safe">
-                  <div className="bg-gray-100/50 w-20 rounded-2xl">
-                    <img src="../../src/assets/images/products/orange.png" className="w-full object-contain object-center" alt="product" />
-                  </div>
-
-                  <div className="font-medium flex-1">
-                    <p className=" ">Sweet Green Seedless Grapes 1.5-2 lb</p>
-                    <p className="text-[#A02B84] font-semibold">$99.99  <span className="text-gray-400 font-light ml-2">$99.99</span></p>
-                  </div>
-                </div>
-
-                <div className="flex w-full lg:w-70 justify-between items-center-safe gap-1 ">
-                  <div className="bg-gray-100/50 flex items-center-safe p-1 gap-1 rounded-3xl">
-                    <button className="p-2 bg-white rounded-full">
-                      <HiOutlineTrash className="size-5" />
-                    </button>
-                    <p className="px-2 font-semibold">{state.count || 0}</p>
-                    <button className="p-2 bg-[#A02B84] text-white rounded-full"><GoPlus className="size-5" /></button>
-                    <button className="text-[#A02B84] text-sm font-medium lg:order-last order-first">Remove</button>
-                  </div>
-
-                  <p className="font-medium text-xl order-first lg:order-last">$25.98</p>
-                </div>
-              </div>
-              <div className="flex items-center-safe gap-3 lg:flex-nowrap flex-wrap justify-between">
-                <div className="flex items-center-safe">
-                  <div className="bg-gray-100/50 w-20 rounded-2xl">
-                    <img src="../../src/assets/images/products/orange.png" className="w-full object-contain object-center" alt="product" />
-                  </div>
-
-                  <div className="font-medium flex-1">
-                    <p className=" ">Sweet Green Seedless Grapes 1.5-2 lb</p>
-                    <p className="text-[#A02B84] font-semibold">$99.99  <span className="text-gray-400 font-light ml-2">$99.99</span></p>
-                  </div>
-                </div>
-
-                <div className="flex w-full lg:w-70 justify-between items-center-safe gap-1 ">
-                  <div className="bg-gray-100/50 flex items-center-safe p-1 gap-1 rounded-3xl">
-                    <button className="p-2 bg-white rounded-full">
-                      <HiOutlineTrash className="size-5" />
-                    </button>
-                    <p className="px-2 font-semibold">1</p>
-                    <button className="p-2 bg-[#A02B84] text-white rounded-full"><GoPlus className="size-5" /></button>
-                    <button className="text-[#A02B84] text-sm font-medium lg:order-last order-first">Remove</button>
-                  </div>
-
-                  <p className="font-medium text-xl order-first lg:order-last">$25.98</p>
-                </div>
-              </div>
-              <div className="flex items-center-safe gap-3 lg:flex-nowrap flex-wrap justify-between">
-                <div className="flex items-center-safe">
-                  <div className="bg-gray-100/50 w-20 rounded-2xl">
-                    <img src="../../src/assets/images/products/orange.png" className="w-full object-contain object-center" alt="product" />
-                  </div>
-
-                  <div className="font-medium flex-1">
-                    <p className=" ">Sweet Green Seedless Grapes 1.5-2 lb</p>
-                    <p className="text-[#A02B84] font-semibold">$99.99  <span className="text-gray-400 font-light ml-2">$99.99</span></p>
-                  </div>
-                </div>
-
-                <div className="flex w-full lg:w-70 justify-between items-center-safe gap-1 ">
-                  <div className="bg-gray-100/50 flex items-center-safe p-1 gap-1 rounded-3xl">
-                    <button className="p-2 bg-white rounded-full">
-                      <HiOutlineTrash className="size-5" />
-                    </button>
-                    <p className="px-2 font-semibold">1</p>
-                    <button className="p-2 bg-[#A02B84] text-white rounded-full"><GoPlus className="size-5" /></button>
-                    <button className="text-[#A02B84] text-sm font-medium lg:order-last order-first">Remove</button>
-                  </div>
-
-                  <p className="font-medium text-xl order-first lg:order-last">$25.98</p>
-                </div>
-              </div>
+              } )}
 
 
             </div>

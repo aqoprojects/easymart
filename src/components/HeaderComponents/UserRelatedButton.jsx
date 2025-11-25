@@ -1,15 +1,21 @@
+import { useEffect, useState } from "react";
 import { BsCartDash } from "react-icons/bs";
 import { MdOutlinePeopleOutline } from "react-icons/md";
 import { NavLink } from "react-router-dom";
+import { useCart } from "../../contexts/CartContext";
 
 const UserRelatedButton = () =>
 {
+  // const [totalCart, setTotalCart] = useState(0)
+  const {cartTotal} = useCart();
+
+
   return (
     <>
       <NavLink to={"/product-cart"} className='bg-[#A02B84] lg:bg-[#FDEAFB] flex lg:space-x-1 items-center-safe justify-center-safe lg:ml-2 py-1 px-1 lg:pr-2 rounded-full'>
         <div className='flex items-center-safe justify-center-safe lg:space-x-1 py-1 px-3 lg:px-2 lg:bg-white text-white lg:text-[#B6349A] font-semibold rounded-full text-sm'>
           <BsCartDash className='size-5 lg:' />
-          <span className='hidden lg:block'>14</span>
+          <span className='hidden lg:block'>{cartTotal}</span>
         </div>
         <p className='hidden lg:block font-medium text-md'>Cart</p>
       </NavLink>
