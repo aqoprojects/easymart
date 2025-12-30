@@ -3,12 +3,13 @@ import { useLocation } from 'react-router-dom';
 
 const Footer = () => {
   const location = useLocation()
-  const FooterDenied = '/account'
+  const FooterDenied = ['/account', '/login', '/register']
+  const normalizedPath = location.pathname !== '/' && location.pathname.endsWith('/') ? location.pathname.slice(0, -1) : location.pathname;
 
   return (
 
     <>
-      { !location.pathname.includes(FooterDenied) &&
+      { !location.pathname.includes(normalizedPath) &&
       <footer >
         <article className='w-full flex px-3 flex-wrap md:flex-nowrap md:justify-evenly  gap-5 pt-15'>
           <section>

@@ -4,11 +4,13 @@ import { MdOutlinePeopleOutline } from "react-icons/md";
 import { NavLink } from "react-router-dom";
 import { useCart } from "../../contexts/CartContext";
 
-const UserRelatedButton = () =>
+const UserRelatedButton = ({isLoggedIn}) =>
 {
-  // const [totalCart, setTotalCart] = useState(0)
-  const {cartTotal} = useCart();
-
+  
+  const {cartTotal, fetchCart} = useCart();
+  useEffect(()=> {
+    fetchCart()
+  }, [])
 
   return (
     <>
@@ -21,7 +23,7 @@ const UserRelatedButton = () =>
       </NavLink>
       <div className='hidden lg:flex ring-1 ring-[#DE57C4] items-center-safe justify-center-safe space-x-1.5 py-2 px-8 rounded-full font-medium ml-6'>
         <MdOutlinePeopleOutline />
-        <NavLink to={"/account/login"}>Login</NavLink>
+         {isLoggedIn ? <NavLink to={"/account"}>Account</NavLink> : <NavLink to={"/account/login"}>Login</NavLink>}
       </div>
     </>
   );

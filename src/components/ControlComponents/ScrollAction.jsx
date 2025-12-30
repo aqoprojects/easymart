@@ -1,6 +1,7 @@
 import { GoArrowRight } from "react-icons/go";
 import { MdArrowBackIosNew } from "react-icons/md";
 import { MdArrowForwardIos } from "react-icons/md";
+import { NavLink } from "react-router-dom";
 const ScrollAction = ({scrollRef, canScrollRight, canScrollLeft, totalProducts, disabled_view=false}) => {
   
   const scrollForward = () =>
@@ -19,11 +20,11 @@ const ScrollAction = ({scrollRef, canScrollRight, canScrollLeft, totalProducts, 
 
   return (
     <div className="flex gap-10 items-center-safe justify-center-safe ">
-          {!disabled_view && <button className="flex gap-2 items-center-safe justify-center-safe ring-1 ring-[#DE57C4] py-2 px-2 rounded-full font-semibold">
+          {!disabled_view && <NavLink to={'/products/best-selling'} className="flex gap-2 items-center-safe justify-center-safe ring-1 ring-[#DE57C4] py-2 px-2 rounded-full font-semibold">
                 View All ({totalProducts > 99 ? '+ 99' : totalProducts})
                 <GoArrowRight className="hidden md:block size-6" />
                 <MdArrowForwardIos className="block md:hidden" />
-              </button>}
+              </NavLink>}
               
     
               <div className="hidden md:block">

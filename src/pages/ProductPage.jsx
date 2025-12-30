@@ -11,7 +11,7 @@ import ProductDetail from "../components/ProductComponents/ProductDetail";
 import { NavLink, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useCart } from "../contexts/CartContext";
-import axiosinstance from "../axiosinstance";
+import api from "../services/api";
 
 const ProductPage = () =>
 {
@@ -37,16 +37,14 @@ const ProductPage = () =>
 
   const getProduct = async () =>
   {
-    const response = await axiosinstance.get( `/product/${productId}/` );
+    const response = await api.get( `/product/${productId}/` );
     setProduct( response.data );
     setSelectedImage(`http://localhost:8000${response.data.productImage.find( image => image.is_primary === true).image_url}`)
-    // console.log( response.data.productImage );
   };
 
   const handleAddToCart = async ()=> {
     try{
       await addToCart(product.product_id, 1)
-      console.log("Added");
     } catch (error){
       console.log(error);
     }
@@ -79,7 +77,6 @@ const ProductPage = () =>
             <img src={selectedImage} className="w-full h-100 object-contain" alt="" />
           </div>
           <div className="flex gap-3  justify-center-safe overflow-x-auto no-scrollbar px-5">
-            {/* {product?.productImage?.map(p => console.log(p))} */}
 
             {product?.productImage?.map( images => <div key={images.image_id} className={`min-w-20 p-2 rounded-lg bg-[#F2FFF6] border-1 ${selectedImage === 'http://localhost:8000'+images.image_url ? 'border-[#B6349A]':'opacity-65 border-[#EFEEEE]'} `}>
               <img src={`http://localhost:8000${images.image_url}`} className=" object-cover h-15 w-20 object-center" alt="" onClick={()=> setSelectedImage(`http://localhost:8000${images.image_url}`)} />

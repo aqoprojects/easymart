@@ -10,7 +10,7 @@ const row2Ref = useRef( null );
 
  const scrollToPosition = (position) => {
     const scrollOptions = { behavior: 'smooth' };
-    const refs = [row1Ref, row2Ref].filter(ref => ref.current); // Handle mobile case
+    const refs = [row1Ref, row2Ref].filter(ref => ref.current); 
     refs.forEach((ref) => {
       if (position === 'start') {
         ref.current.scrollTo({ left: 0, ...scrollOptions });

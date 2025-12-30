@@ -5,7 +5,7 @@ import { useCart } from '../../contexts/CartContext';
 const AddDeleteAction = ( { cartItemId, productId, quantity } ) =>
 {
 
-  const { updateCart } = useCart();
+  const { updateCart, deleteCart } = useCart();
   const reducer = ( state, action ) =>
   {
     switch ( action.type ) {
@@ -48,14 +48,24 @@ const AddDeleteAction = ( { cartItemId, productId, quantity } ) =>
 
   }
 
+
+  async function RemoveCart(){
+    try{
+      await deleteCart(cartItemId, productId)
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
-    <div className="bg-gray-100/50 flex items-center-safe p-1 gap-1 rounded-3xl">
-      <button className="p-2 bg-white rounded-full" onClick={() => DeleteCart()}>
-        <HiOutlineTrash className="size-5" />
-      </button>
-      <p className="px-2 font-semibold">{state.quantity}</p>
-      <button className="p-2 bg-[#A02B84] text-white rounded-full" onClick={() => UpdateCart()}><GoPlus className="size-5" /></button>
-      <button className="text-[#A02B84] text-sm font-medium lg:order-last order-first">Remove</button>
+    <div className="flex items-center-safe justify-between gap-3 ">
+     <div className="bg-gray-100/50 flex items-center-safe rounded-3xl p-1">
+       <button className="p-2 bg-white rounded-full" onClick={() => DeleteCart()}>
+         <HiOutlineTrash className="size-5" />
+       </button>
+       <p className="px-2 font-semibold">{state.quantity}</p>
+       <button className="p-2 bg-[#A02B84] text-white rounded-full" onClick={() => UpdateCart()}><GoPlus className="size-5" /></button>
+     </div>
+      <button className="text-[#A02B84] text-sm font-medium lg:order-last order-first" onClick={()=> RemoveCart()}>Remove</button>
     </div>
   );
 };

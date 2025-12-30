@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 
 const Discount4 = ({name, desc, products}) =>
 {
-  // const [promotions, setPromotions] = useState([])
  
   return (
     <article className='px-4'>

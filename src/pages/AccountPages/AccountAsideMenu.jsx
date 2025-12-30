@@ -10,29 +10,34 @@ import { HiOutlinePercentBadge } from "react-icons/hi2";
 import { IoSettingsOutline } from "react-icons/io5";
 import { ImNotification } from "react-icons/im";
 import { TbLogout2 } from "react-icons/tb";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useRef } from "react";
-
-
+import { NavLink } from "react-router-dom";
+import { useEffect } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { useCart } from "../../contexts/CartContext";
 const AccountAsideMenu = () =>
 {
-  const navigate = useNavigate()
-  const handleLogout = ()=> {
-    navigate("/account/login")
+  const {user, logout} = useAuth();
+  const {resetCart} = useCart();
+  const handleLogout = async()=> {
+    await logout();
+    await resetCart();
   }
-
-  // const Menu = useRef(null)
-  // const active = ''
+  function getProfile(){
+        return `${String(user.first_name).charAt(0).toUpperCase()}${String(user.last_name).charAt(0).toUpperCase()}`
+      }
+  useEffect(()=>{
+    getProfile()
+  }, [])
   return (
     <aside className="hidden w-fit md:max-w-80 p-2 md:p-5 md:flex flex-col justify-between gap-5 h-lvh">
       <div className="bg-[#FBFBFE] rounded-2xl p-5 flex flex-col items-center-safe md:items-baseline">
         <div className="flex gap-2 items-center-safe mb-5">
           <div className="w-12 h-12 bg-[#E15177] rounded-full">
             <img src="../../src/assets/images/products/orange.png" alt="profile" className="w-full hidden" />
-            <p className="flex justify-center-safe mt-1 items-center-safe text-white text-3xl font-semibold overflow-hidden">AQ</p>
+            <p className="flex justify-center-safe mt-1 items-center-safe text-white text-3xl font-semibold overflow-hidden">{getProfile()}</p>
           </div>
 
-          <h3 className="hidden md:block text-md font-bold">AQO Projects</h3>
+          <h3 className="hidden md:block text-md font-bold">{user.first_name} {user.last_name}</h3>
         </div>
 
         <div className="border-b-1 border-black/10 mb-5">

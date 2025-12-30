@@ -8,15 +8,16 @@ import Discount from '../components/Discount';
 import WeeklySold from '../components/WeeklySold';
 import Discount2 from '../components/Discount2';
 import Discount3 from '../components/Discount3';
-import axiosinstance from "../axiosinstance";
 import Discount4 from '../components/Discount4';
+import api from '../services/api';
 
 const HomePage = () => {
   const [promotions, setPromotions] = useState(
     []
   )
+
    const getPromotions = async ()=> {
-    const response = await axiosinstance.get('/promotions/?size=3')
+    const response = await api.get('/promotions/?size=3')
     setPromotions({
       promotion1: response.data['0'], 
       promotion2: response.data['1'], 

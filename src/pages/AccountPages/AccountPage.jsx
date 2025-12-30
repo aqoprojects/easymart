@@ -1,10 +1,12 @@
 import { HiOutlinePencilAlt } from "react-icons/hi";
 import AccountAsideMenu from "./AccountAsideMenu";
-
+import { useAuth } from "../../contexts/AuthContext";
 
 
 const AccountPage = () =>
 {
+  const { user, } = useAuth()
+  
   return (
     
       <article className="p-5">
@@ -17,7 +19,7 @@ const AccountPage = () =>
           <div className="flex justify-between ring-1 ring-black/10 rounded-2xl py-3 px-5">
             <div>
               <p className="font-semibold text-xl">Full Name</p>
-              <p className="text-black/50 text-lg">Alicii Virgo</p>
+              <p className="text-black/50 text-lg">{user.first_name} {user.last_name}</p>
             </div>
             <div className="flex items-center-safe gap-2 text-[#B6349A] font-semibold">
               <HiOutlinePencilAlt className="size-7" />
@@ -39,7 +41,7 @@ const AccountPage = () =>
           <div className="flex justify-between ring-1 ring-black/10 rounded-2xl py-3 px-5">
             <div>
               <p className="font-semibold text-xl">Email</p>
-              <p className="text-black/50 text-lg">github.com/aqoprojects</p>
+              <p className="text-black/50 text-lg">{user.email}</p>
             </div>
             <div className="flex items-center-safe gap-2 text-[#B6349A] font-semibold">
               <HiOutlinePencilAlt className="size-7" />

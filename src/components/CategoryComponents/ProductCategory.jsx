@@ -1,18 +1,53 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useEffect } from 'react'
+import { useCategory } from '../../contexts/CategoryContext';
+import ProductCategoryItem from './ProductCategoryItems';
+import { CategoryErrorSkeleton, CategorySkeleton } from '../Skeletons/CategorySkeleton';
+import { useParams, useLocation } from 'react-router-dom';
 
-const ProductCategory = ({truncate, name, icon}) =>
-{
-  const [isIconLoaded, setIsIconLoaded] = useState(false)
+const ProductCategory = () => {
+  const {categoryId} = useParams();
+  const location = useLocation()
+  const { state, selectCategory,  } = useCategory();
+  const { categories,  loading: isLoading, error: fetchError } = state;
+
+  useEffect(()=>{
+    if (location.pathname.includes('/category/')){
+      
+    selectCategory(categoryId); 
+    }
+    }, [location.pathname]
+  )
+
+  const handleCategoryClick = (category) => {
+    selectCategory(category);  
+  };
+  
+
+  if (fetchError && !isLoading) {
+    return (
+      <CategoryErrorSkeleton>
+        Failed to load categories
+      </CategoryErrorSkeleton>
+    );
+  }
+  
+  if (categories.length === 0) {
+    return (
+      <>
+        {[ ...Array( 6 ) ].map( ( _, i ) => (
+          <CategorySkeleton key={i} items_no_wrap={'flex-row text-nowarp'} />
+        ) )}
+      </>
+    );
+  }
 
   return (
-    <NavLink to={`/category/${name}`} className='md:bg-black/5 flex space-x-1.5 px-3 py-1 w-auto max-w-40 rounded-full items-center justify-center flex-col md:flex-row '>
-      {!isIconLoaded && <div className='bg-gray-300 rounded-full min-w-6 h-6 animate-pulse'></div>}
+    <>
+      {
+       categories.map( category => (<div onClick={()=> handleCategoryClick(category.category_id)}><ProductCategoryItem key={category.category_id}  categoryId={category.category_id} truncate={'text-nowrap'} slug={category.slug} name={category.name} icon={category.Icon} contain_items={'w-auto'} items_no_wrap={'flex-row'} mobile_bg={'true'} /> </div>) )
+      }
+    </>
+  )
+}
 
-      <img className={`${isIconLoaded ? 'block': 'hidden'} bg-black/5  rounded-full min-w-6 h-6 bg-cover`} src={icon} alt={ name} onLoad={()=> setIsIconLoaded(true)}/>
-      <span className={`font-medium text-md pr-2 ${truncate && truncate} `} >{name}</span>
-    </NavLink>
-  );
-};
-
-export default ProductCategory;
+export default ProductCategory

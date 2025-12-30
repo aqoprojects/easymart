@@ -1,17 +1,33 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import Logo from '/Logo.png';
 import { AiOutlineMail } from "react-icons/ai";
 import { PiPhoneLight } from "react-icons/pi";
 import { BsArrowRight } from 'react-icons/bs';
 import { FaMeta } from "react-icons/fa6";
 import { FaGoogle } from "react-icons/fa";
-
+import { useAuth } from '../../contexts/AuthContext';
+import { useState } from 'react';
 
 const AccountLoginPage = () => {
-  const navigate = useNavigate()
-  const handleLogin = (e)=>{
+  const [credentials, setCredentials] = useState({ email: '', password: '' })
+  const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+
+  const { login } = useAuth();
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    navigate('/account')
+    setSubmitting(true)
+    setError('')
+    const result = await login(credentials)
+    if (!result.success) {
+      setError(result.error)
+    }
+    setSubmitting(false)
+  }
+
+  const handleChange = (e) => {
+    setCredentials({ ...credentials, [e.target.name]: e.target.value })
   }
 
 
@@ -37,10 +53,17 @@ const AccountLoginPage = () => {
              <button className="flex gap-2 items-center-safe text-black/30 bg-black/4 px-5 py-2.5 rounded-xl font-semibold"> <PiPhoneLight className="size-6" />Phone</button>
           </div>
 
-          <form onSubmit={handleLogin}>
-            <p className='font-semibold text-lg mb-1'>Email</p>
-            <input type="text" className='ring-1 ring-black/10 outline-none w-full py-3 px-4 bg-white rounded-lg mb-8' placeholder='Enter your email' />
-             <button className="bg-[#B6349A] outline-none text-white flex gap-2 py-2.5 w-full px-8 justify-center-safe items-center-safe font-semibold text-lg rounded-4xl">Coutinue <BsArrowRight className="size-5"  /> </button>
+          <form onSubmit={handleSubmit}>
+            <div>
+              <p className='font-semibold text-lg mb-1'>Email</p>
+              <input type="email" name='email' className='ring-1 ring-black/10 outline-none w-full py-3 px-4 bg-white rounded-lg mb-4' placeholder='Enter your email' value={credentials.email} onChange={handleChange} required />
+            </div>
+
+            <div>
+              <p className='font-semibold text-lg mb-1'>Password</p>
+              <input type="password" name='password' className='ring-1 ring-black/10 outline-none w-full py-3 px-4 bg-white rounded-lg mb-8' placeholder='Password'  value={credentials.password} onChange={handleChange} required />
+            </div>
+            <button type='submit' className="bg-[#B6349A] outline-none text-white flex gap-2 py-2.5 w-full px-8 justify-center-safe items-center-safe font-semibold text-lg rounded-4xl">Coutinue <BsArrowRight className="size-5"  /> </button>
           </form>
           
         </div>

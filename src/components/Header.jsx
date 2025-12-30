@@ -6,18 +6,19 @@ import { IoMenuOutline } from "react-icons/io5";
 import { NavLink, useLocation } from 'react-router-dom';
 import { RxCross1 } from 'react-icons/rx';
 import { useRef } from 'react';
-
+import { useAuth } from '../contexts/AuthContext';
 const Header = () =>
 {
+  const {user} = useAuth();
+  const isLoggedIn = user ? true:false
+
   const location = useLocation();
-  const HeaderDenied = [ '/account/login', '/account/register', '/account/preference', '/account/verification' ];
+  const HeaderDenied = [ '/login', '/account/register', '/account/preference', '/account/verification' ];
   const normalizedPath = location.pathname !== '/' && location.pathname.endsWith('/') ? location.pathname.slice(0, -1) : location.pathname;
   const showMobileMenu = useRef()
   const handleMenu = ()=> {
       showMobileMenu.current.classList.toggle('hidden')
-      // if (!showMobileMenu.current.classList.){
-      //   document.body.style.overflow = 'hidden'
-      // }
+      
       const isOverFLow = showMobileMenu.current.classList.contains("hidden") 
       document.body.style.overflow = isOverFLow ? 'auto' : 'hidden'
     }
@@ -55,7 +56,9 @@ const Header = () =>
 
                   <div className='flex ring-1 ring-[#DE57C4] items-center-safe justify-center-safe space-x-1.5 py-2 px-8 rounded-full font-medium mt-10'>
                     {/* <MdOutlinePeopleOutline /> */}
-                    <NavLink to={"/account/login"}>Login</NavLink>
+                    
+                    {isLoggedIn ? <NavLink to={"/account"}>Account</NavLink> : <NavLink to={"/account/login"}>Login</NavLink>}
+                    
                   </div>
 
                 </div>
@@ -71,7 +74,7 @@ const Header = () =>
 
             <SearchBar />
 
-            <UserRelatedButton />
+            <UserRelatedButton  isLoggedIn={isLoggedIn} />
           </nav>
         </header>
       }

@@ -1,13 +1,11 @@
 import { NavLink } from 'react-router-dom';
 import Logo from '/Logo.png';
 import { AiOutlineMail } from "react-icons/ai";
-import { PiPhoneLight } from "react-icons/pi";
-import { BsArrowRight } from 'react-icons/bs';
 import { FaMeta } from "react-icons/fa6";
 import { FaGoogle } from "react-icons/fa";
 import { useState } from 'react';
 import { ImSpinner2 } from "react-icons/im";
-import axiosinstance from "../../axiosinstance";
+import api from '../../services/api';
 const AccountRegisterPage = () =>
 {
   const [ firstName, setFirstName ] = useState( '' );
@@ -19,7 +17,6 @@ const AccountRegisterPage = () =>
 
   const handleRegistration = async ( e ) =>{
     e.preventDefault();
-  // console.log("Processing")
   if (status == 'processing'){
     return;
   }
@@ -28,13 +25,12 @@ const AccountRegisterPage = () =>
     firstName, lastName, email, password
   };
   try {
-    const response = await axiosinstance.post( '/register/', {
+    const response = await api.post( '/register/', {
       email: customerData.email,
       first_name: customerData.firstName,
       last_name: customerData.lastName,
       password: customerData.password
     } );
-    // console.log(response.data);
   } catch ( error ) {
     if ( error.response ) {
       setFormError( error.response.data );

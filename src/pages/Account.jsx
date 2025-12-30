@@ -27,9 +27,9 @@ const Account = () => {
         <Routes>
           <Route index  element={<AccountPage/>} />
           <Route path="preference" element={<AccountPreferencePage/>} />
-          <Route path="login" element={<AccountLoginPage/>} />
-          <Route path="register" element={<AccountRegisterPage/>} />
-          <Route path="verification" element={<AccountVerificationPage/>} />
+          {/* <Route path="login" element={<AccountLoginPage/>} />
+          <Route path="register" element={<AccountRegisterPage/>} /> */}
+          {/* <Route path="verification" element={<AccountVerificationPage/>} /> */}
           <Route path="orders" element={<AccountOrdersPage/>} />
           <Route path="carts" element={<AccountCartPage/>} />
           <Route path="address" element={<AccountAddressPage/>} />

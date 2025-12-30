@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 
 const Discount = ({name, desc}) =>
 {
-  // const [promotions, setPromotions] = useState([])
  
 
   return (

@@ -1,4 +1,3 @@
-// import { useRef } from 'react';
 import PromoDetail from './PromoDetail';
 import {PromoSliderContext} from '../ProductSlider'
 import { useContext } from 'react';

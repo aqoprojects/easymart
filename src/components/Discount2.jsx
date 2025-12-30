@@ -16,7 +16,7 @@ const Discount2 = ( { name, desc, total_products, products, discount_type, disco
     return { type: "Ended", value: 0 };
   }
   const diffSeconds = Math.floor(diffMs / 1000);
-  const diffMinutes = diffMs / (1000 * 60); // keep as float
+  const diffMinutes = diffMs / (1000 * 60); 
   const diffHours = diffMinutes / 60;
   const diffDays = diffHours / 24;
 
@@ -25,8 +25,6 @@ const Discount2 = ( { name, desc, total_products, products, discount_type, disco
   } else if (diffHours >= 1) {
     return { type: "hours", value: Math.floor(diffHours) };
   } else if (diffMinutes >= 1) {
-    // round up to 1 if under a minute but still positive
-    // const minutes = Math.ceil(diffMinutes);
     return { type: "minutes", value: Math.floor(diffMinutes) };
   }  else{
     return {
@@ -37,7 +35,6 @@ const Discount2 = ( { name, desc, total_products, products, discount_type, disco
 }
 
   useEffect(() => {
-    // Run immediately
     const update = () => {
       const durationInfo = getDurationType(start_date, end_date);
       setDuration(durationInfo);
@@ -45,7 +42,6 @@ const Discount2 = ( { name, desc, total_products, products, discount_type, disco
 
     update();
 
-    // Update every 30 seconds
     const interval = setInterval(update, 1000);
 
     return () => clearInterval(interval);
